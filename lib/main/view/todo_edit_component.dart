@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_mvp/Utils/date_formatter.dart';
 import 'package:flutter_mvp/main/presenter/todo_presenter.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
@@ -137,6 +137,6 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
     this
         .widget
         .presenter
-        .updateItem(widget.task.id, _displayTask, '', _displayDate);
+        .updateItem(widget.task.id,widget.task.complete, _displayTask, '', _displayDate);
   }
 }

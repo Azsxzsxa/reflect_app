@@ -1,27 +1,27 @@
-import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/interactor/todo_interactor.dart';
-import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
 
-class TodoPresenter{
-  set initView(TodoView value){}
+import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/interactor/todo_interactor.dart';
+import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 
-  void deleteItem(TodoViewModel item){}
-  void toggleItem(TodoViewModel item){}
-  void updateItem(int id, String task,String description, String date){}
-  void saveItem(TodoViewModel item){}
-  void refresh(){}
+// class TodoPresenter{
+//   set initView(TodoView value){}
+//
+//   void deleteItem(TodoViewModel item){}
+//   void toggleItem(TodoViewModel item){}
+//   void updateItem(int id, String task,String description, String date){}
+//   void saveItem(TodoViewModel item){}
+//   void refresh(){}
+//
+// }
 
-}
-
-class TodoBasicPresenter implements TodoPresenter{
+class TodoPresenter implements InteractorListener{
   TodoView _view;
   List<TodoViewModel> _todoList;
-  TodoBasicInteractor todoBasicInteractor;
+  TodoInteractor todoBasicInteractor;
 
-  TodoBasicPresenter() {
+  TodoPresenter() {
     this._todoList = [];
-    this.todoBasicInteractor = new TodoBasicInteractor(this);
-    // _loadList();
+    this.todoBasicInteractor = new TodoInteractor(this);
   }
 
   void _loadList() async{
@@ -30,60 +30,45 @@ class TodoBasicPresenter implements TodoPresenter{
     _view.refreshList(_todoList);
   }
 
-  @override
   set initView(TodoView value) {
     _view = value;
     _loadList();
 
   }
 
-  void toggleCallback(){
-    refresh();
-    _view.refreshList(_todoList);
-  }
-
-  void saveCallback(){
-    refresh();
-    _view.refreshList(_todoList);
-  }
-
-  void deleteCallback(){
-    refresh();
-    _view.refreshList(_todoList);
-  }
-
-
-
-  @override
   void deleteItem(TodoViewModel item){
     todoBasicInteractor.deleteItem(item);
   }
 
-  @override
   void toggleItem(TodoViewModel item){
     todoBasicInteractor.update(item);
   }
 
-  @override
-  void updateItem(int id, String task,String description, String date) {
+  void updateItem(int id,bool complete, String task,String description, String date) {
     TodoViewModel updatedTask = new TodoViewModel();
     updatedTask.id = id;
+    updatedTask.complete = complete;
     updatedTask.task = task;
     updatedTask.date = date;
     todoBasicInteractor.update(updatedTask);
   }
 
-  @override
   void saveItem(TodoViewModel item){
     todoBasicInteractor.saveItem(item);
   }
 
-  @override
   void refresh() async{
     List<TodoViewModel> tasklist = await todoBasicInteractor.getList();
     _todoList = tasklist;
     _view.refreshList(_todoList);
   }
+
+  @override
+  void onUpdateSuccess() {
+    refresh();
+    _view.refreshList(_todoList);
+  }
+
 
 
 
