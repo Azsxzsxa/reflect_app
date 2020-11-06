@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mvp/Utils/date_formatter.dart';
 import 'package:flutter_mvp/main/presenter/todo_presenter.dart';
 import 'package:flutter_mvp/main/view/todo_edit_component.dart';
-import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
+
+import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 
 class HomePage extends StatefulWidget {
   final TodoPresenter presenter;
@@ -17,7 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> implements TodoView {
-  String _task;
+  String _task="";
   var _dateTime = new DateTime.now();
   List<TodoViewModel> _tasks = [];
 
@@ -175,25 +176,6 @@ class _HomePageState extends State<HomePage> implements TodoView {
                               ),
                             ],
                           ),
-                          Row(
-                            children: [
-                              FlatButton(
-                                  child: Text('Cancel'),
-                                  onPressed: () => Navigator.of(context).pop()),
-                              FlatButton(
-                                  child: Text('Save'),
-                                  onPressed: () {
-                                    String taskDate =
-                                    DateFormatter.getFormattedDate(_dateTime);
-                                    this.widget.presenter.saveItem(
-                                        new TodoViewModel(
-                                            task: _task,
-                                            complete: false,
-                                            date: taskDate));
-                                    Navigator.of(context).pop();
-                                  })
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -203,7 +185,18 @@ class _HomePageState extends State<HomePage> implements TodoView {
               );
             });
       },
-    );
+    ).whenComplete(() {
+      if(_task.isNotEmpty){
+        String taskDate =
+        DateFormatter.getFormattedDate(_dateTime);
+        this.widget.presenter.saveItem(
+            new TodoViewModel(
+                task: _task,
+                complete: false,
+                date: taskDate));
+        _task = "";
+      }
+    });
   }
 
   @override
