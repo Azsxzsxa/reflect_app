@@ -19,7 +19,7 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
   DateTime _dateTime = new DateTime.now();
   String _displayDate;
   String _displayTask;
-  String _displayDescription;
+  String _displayDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +71,12 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
                       decoration: InputDecoration(border: InputBorder.none)),
                   TextFormField(
                       style: TextStyle(fontSize: 20),
+                      onChanged: (text) {
+                        _displayDetails = text;
+                      },
+                      controller: setInitialText(_displayDetails == null
+                          ? widget.task.details
+                          : _displayDetails),
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Add Deatils',
@@ -134,9 +140,10 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
     if (_displayDate == null) {
       _displayDate = widget.task.date;
     }
-    this
-        .widget
-        .presenter
-        .updateItem(widget.task.id,widget.task.complete, _displayTask, '', _displayDate);
+    if (_displayDetails == null) {
+      _displayDetails = widget.task.details;
+    }
+    this.widget.presenter.updateItem(
+        widget.task.id, widget.task.complete, _displayTask, _displayDetails, _displayDate);
   }
 }

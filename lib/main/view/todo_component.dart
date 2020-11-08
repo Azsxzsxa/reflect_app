@@ -18,8 +18,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>with TickerProviderStateMixin implements TodoView {
-  String _task="";
+class _HomePageState extends State<HomePage>
+    with TickerProviderStateMixin
+    implements TodoView {
+  String _taskText = "";
+  String _taskDetails = "";
   var _dateTime = new DateTime.now();
   List<TodoViewModel> _tasks = [];
 
@@ -28,10 +31,21 @@ class _HomePageState extends State<HomePage>with TickerProviderStateMixin implem
 
   bool _detailedText = false;
 
+  FocusNode detailsFocusNode;
+
   @override
   void initState() {
     this.widget.presenter.initView = this;
     super.initState();
+    detailsFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    detailsFocusNode.dispose();
+
+    super.dispose();
   }
 
   Widget format(TodoViewModel item) {
@@ -107,113 +121,118 @@ class _HomePageState extends State<HomePage>with TickerProviderStateMixin implem
       builder: (context) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                            hintText: 'Today I will ...',
+                            border: InputBorder.none),
+                        onChanged: (value) {
+                          _taskText = value;
+                        },
+                        autofocus: true,
+                      ),
+                      AnimatedSizeAndFade(
+                        vsync: this,
+                        child: _detailedText
+                            ? Visibility(
+                                visible: true,
+                                child: TextField(
+                                  focusNode: detailsFocusNode,
+                                  decoration: InputDecoration(
+                                      hintText: 'More details ...',
+                                      border: InputBorder.none),
+                                  onChanged: (value) {
+                                    _taskDetails = value;
+                                  },
+                                ),
+                              )
+                            : Visibility(
+                                visible: false,
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                      hintText: 'More details ...',
+                                      border: InputBorder.none),
+                                  onChanged: (value) {
+                                    _taskDetails = value;
+                                  },
+                                ),
+                              ),
+                        fadeDuration: const Duration(milliseconds: 150),
+                        sizeDuration: const Duration(milliseconds: 300),
+                      ),
+                      Row(
                         children: [
-                          TextField(
-                            decoration: InputDecoration(
-                                hintText: 'Today I will ...',
-                                border: InputBorder.none),
-                            onChanged: (value) {
-                              _task = value;
-                            },
-                            autofocus: true,
-                          ),
-                          AnimatedSizeAndFade(
-                            vsync: this,
-                            child: _detailedText ?                           Visibility(
-                              visible: true,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                    hintText: 'More details ...',
-                                    border: InputBorder.none),
-                                onChanged: (value) {
-                                  _task = value;
-                                },
-                              ),
-                            ) :                           Visibility(
-                              visible: false,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                    hintText: 'More details ...',
-                                    border: InputBorder.none),
-                                onChanged: (value) {
-                                  _task = value;
-                                },
-                              ),
-                            ),
-                            fadeDuration: const Duration(milliseconds: 150),
-                            sizeDuration: const Duration(milliseconds: 300),
-                          ),
-
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.calendar_today_outlined,
-                                    color: Colors.black45),
-                                tooltip: 'Increase volume by 10',
-                                onPressed: () {
-                                  showDatePicker(
+                          IconButton(
+                            icon: Icon(Icons.calendar_today_outlined,
+                                color: Colors.black45),
+                            tooltip: 'Increase volume by 10',
+                            onPressed: () {
+                              showDatePicker(
                                       context: context,
                                       initialDate: _dateTime == null
                                           ? DateTime.now()
                                           : _dateTime,
                                       firstDate: DateTime(2001),
                                       lastDate: DateTime(2021))
-                                      .then((date) {
-                                    setState(() {
-                                      _dateTime = date;
-                                    });
-                                  });
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.article_outlined,
-                                    color: Colors.black45),
-                                tooltip: 'Add details',
-                                onPressed: () {
-                                  setState(() {
-                                    _detailedText = !_detailedText;
-                                  });
-                                },
-                              ),
-                            ],
+                                  .then((date) {
+                                setState(() {
+                                  _dateTime = date;
+                                });
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.article_outlined,
+                                color: Colors.black45),
+                            tooltip: 'Add details',
+                            onPressed: () {
+                              setState(() {
+                                _detailedText = !_detailedText;
+                                if(_detailedText){
+                                  detailsFocusNode.requestFocus();
+                                }
+                              });
+                            },
                           ),
                         ],
                       ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
+                    ],
+                  ),
                 ),
-              );
-            });
+                SizedBox(height: 10),
+              ],
+            ),
+          );
+        });
       },
     ).whenComplete(() {
-      if(_task.isNotEmpty){
-        String taskDate =
-        DateFormatter.getFormattedDate(_dateTime);
-        this.widget.presenter.saveItem(
-            new TodoViewModel(
-                task: _task,
-                complete: false,
-                date: taskDate));
-        _task = "";
+      if (_taskText.isNotEmpty) {
+        String taskDate = DateFormatter.getFormattedDate(_dateTime);
+        this.widget.presenter.saveItem(new TodoViewModel(
+            task: _taskText,
+            details: _taskDetails,
+            complete: false,
+            date: taskDate));
+        _taskText = "";
+        _taskDetails = "";
       }
     });
   }

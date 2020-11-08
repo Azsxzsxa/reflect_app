@@ -20,7 +20,7 @@ abstract class DB {
   }
 
   static void onCreate(Database db, int version) async => await db.execute(
-      'CREATE TABLE todo_items (id INTEGER PRIMARY KEY NOT NULL, task STRING, complete BOOLEAN, date STRING)');
+      'CREATE TABLE todo_items (id INTEGER PRIMARY KEY NOT NULL, task STRING, details STRING,complete BOOLEAN, date STRING)');
 
   static Future<List<Map<String, dynamic>>> query(String table) async =>
       _db.query(table);
