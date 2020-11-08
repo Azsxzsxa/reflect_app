@@ -1,3 +1,4 @@
+import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/Utils/date_formatter.dart';
@@ -17,7 +18,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> implements TodoView {
+class _HomePageState extends State<HomePage>with TickerProviderStateMixin implements TodoView {
   String _task="";
   var _dateTime = new DateTime.now();
   List<TodoViewModel> _tasks = [];
@@ -100,6 +101,8 @@ class _HomePageState extends State<HomePage> implements TodoView {
   void _create(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
       isScrollControlled: true,
       builder: (context) {
         return StatefulBuilder(
@@ -132,17 +135,33 @@ class _HomePageState extends State<HomePage> implements TodoView {
                             },
                             autofocus: true,
                           ),
-                          Visibility(
-                            visible: _detailedText,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                  hintText: 'More details ...',
-                                  border: InputBorder.none),
-                              onChanged: (value) {
-                                _task = value;
-                              },
+                          AnimatedSizeAndFade(
+                            vsync: this,
+                            child: _detailedText ?                           Visibility(
+                              visible: true,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                    hintText: 'More details ...',
+                                    border: InputBorder.none),
+                                onChanged: (value) {
+                                  _task = value;
+                                },
+                              ),
+                            ) :                           Visibility(
+                              visible: false,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                    hintText: 'More details ...',
+                                    border: InputBorder.none),
+                                onChanged: (value) {
+                                  _task = value;
+                                },
+                              ),
                             ),
+                            fadeDuration: const Duration(milliseconds: 150),
+                            sizeDuration: const Duration(milliseconds: 300),
                           ),
+
                           Row(
                             children: [
                               IconButton(
@@ -206,6 +225,7 @@ class _HomePageState extends State<HomePage> implements TodoView {
       body: Center(child: ListView(children: _items)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          _detailedText = false;
           _create(context);
         },
         tooltip: 'New TODO',
