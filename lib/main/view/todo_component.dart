@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage>
   List<TodoViewModel> _tasks = [];
 
   List<Widget> get _items => _tasks.map((item) => format(item)).toList();
-  TextStyle _style = TextStyle(fontSize: 24, color: Colors.black);
+  TextStyle _style = TextStyle(fontSize: 24, color: Colors.black54, fontFamily: "Quicksand",fontWeight: FontWeight.w600);
 
   bool _detailedText = false;
 
@@ -44,7 +44,6 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     // Clean up the focus node when the Form is disposed.
     detailsFocusNode.dispose();
-
     super.dispose();
   }
 
@@ -240,7 +239,11 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Tasks')),
+      appBar: AppBar(
+          title: Text('Tasks',style: new TextStyle(color: Colors.black54,fontSize: 25,fontWeight: FontWeight.w700)),
+        backgroundColor: Colors.white70,
+        elevation: 0.0,
+      ),
       body: Center(child: ListView(children: _items)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
