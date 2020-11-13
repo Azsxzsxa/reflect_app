@@ -5,6 +5,7 @@ import 'package:flutter_mvp/Utils/date_formatter.dart';
 import 'package:flutter_mvp/main/presenter/todo_presenter.dart';
 import 'package:flutter_mvp/main/view/todo_edit_component.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 
@@ -25,9 +26,14 @@ class _HomePageState extends State<HomePage>
   String _taskDetails = "";
   var _dateTime = new DateTime.now();
   List<TodoViewModel> _tasks = [];
+  CalendarController _calendarController;
 
   List<Widget> get _items => _tasks.map((item) => format(item)).toList();
-  TextStyle _style = TextStyle(fontSize: 24, color: Colors.black54, fontFamily: "Quicksand",fontWeight: FontWeight.w600);
+  TextStyle _style = TextStyle(
+      fontSize: 24,
+      color: Colors.black54,
+      fontFamily: "Quicksand",
+      fontWeight: FontWeight.w600);
 
   bool _detailedText = false;
 
@@ -38,6 +44,7 @@ class _HomePageState extends State<HomePage>
     this.widget.presenter.initView = this;
     super.initState();
     detailsFocusNode = FocusNode();
+    _calendarController = CalendarController();
   }
 
   @override
@@ -205,7 +212,7 @@ class _HomePageState extends State<HomePage>
                             onPressed: () {
                               setState(() {
                                 _detailedText = !_detailedText;
-                                if(_detailedText){
+                                if (_detailedText) {
                                   detailsFocusNode.requestFocus();
                                 }
                               });
@@ -232,6 +239,7 @@ class _HomePageState extends State<HomePage>
             date: taskDate));
         _taskText = "";
         _taskDetails = "";
+        _dateTime = DateTime.now();
       }
     });
   }
@@ -240,11 +248,110 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Tasks',style: new TextStyle(color: Colors.black54,fontSize: 25,fontWeight: FontWeight.w700)),
+        title: Text('Tasks',
+            style: new TextStyle(
+                color: Colors.black54,
+                fontSize: 25,
+                fontWeight: FontWeight.w700)),
         backgroundColor: Colors.white70,
         elevation: 0.0,
+        actions: [
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  print('gift top');
+                },
+                child: Icon(
+                  Icons.card_giftcard_outlined,
+                  color: Colors.black54,
+                ),
+              )),
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  print('calendar top');
+                },
+                child: Icon(
+                  Icons.calendar_today_outlined,
+                  color: Colors.black54,
+                ),
+              )),
+        ],
       ),
-      body: Center(child: ListView(children: _items)),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15.0,top:10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xffba9cff),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0),bottomRight: Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      // spreadRadius: 10,
+                      blurRadius: 15,
+                      offset: Offset(8, 8), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: TableCalendar(
+                  calendarController: _calendarController,
+                  initialCalendarFormat: CalendarFormat.week,
+                  headerVisible: true,
+                  availableCalendarFormats: const {
+                    CalendarFormat.month: 'Month',
+                    CalendarFormat.week: 'Week'
+                  },
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                      weekdayStyle:
+                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                      weekendStyle:
+                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+                  // events: _events,
+                  // holidays: _holidays,
+                  startingDayOfWeek: StartingDayOfWeek.monday,
+                  calendarStyle: CalendarStyle(
+                      selectedColor: Colors.deepOrange[400],
+                      todayColor: Colors.deepOrange[200],
+                      markersColor: Colors.brown[700],
+                      outsideDaysVisible: false,
+                      weekdayStyle:
+                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                      weekendStyle:
+                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
+                  headerStyle: HeaderStyle(
+                    titleTextStyle:
+                        new TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                    formatButtonTextStyle: TextStyle().copyWith(
+                        color: Colors.white,
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w600),
+                    formatButtonDecoration: BoxDecoration(
+                      color: Colors.deepOrange[400],
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                  onDaySelected: (DateTime day, List events, List holidays) {
+                    print('CALLBACK: _onDaySelected');
+                    // setState(() {
+                    //   _selectedEvents = events;
+                    // });
+                  },
+                  // onVisibleDaysChanged: _onVisibleDaysChanged,
+                  // onCalendarCreated: _onCalendarCreated,
+                ),
+              ),
+            ),
+            Flexible(child: ListView(children: _items)),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _detailedText = false;

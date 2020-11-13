@@ -31,8 +31,10 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
         },
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.white70,
+            elevation: 0.0,
             leading: new IconButton(
-              icon: new Icon(Icons.arrow_back),
+              icon: new Icon(Icons.arrow_back,color: Colors.black54),
               onPressed: () {
                 updateItem();
                 Navigator.of(context).pop();
