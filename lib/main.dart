@@ -11,7 +11,7 @@ void main() async{
   runApp(
       new MaterialApp(
         title: 'My tasks',
-        theme: ThemeData(fontFamily: 'Quicksand'),
+        theme: ThemeData(fontFamily: 'Quicksand',primaryColor: Color(0xFFF67B50)),
         home: new HomePage(new TodoPresenter()),
       )
   );

@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage>
   var _dateTime = new DateTime.now();
   List<TodoViewModel> _tasks = [];
   CalendarController _calendarController;
+  var _calendarSize = 150.0;
 
   List<Widget> get _items => _tasks.map((item) => format(item)).toList();
   TextStyle _style = TextStyle(
@@ -259,9 +260,7 @@ class _HomePageState extends State<HomePage>
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: GestureDetector(
-                onTap: () {
-                  print('gift top');
-                },
+                onTap: () {},
                 child: Icon(
                   Icons.card_giftcard_outlined,
                   color: Colors.black54,
@@ -272,6 +271,7 @@ class _HomePageState extends State<HomePage>
               child: GestureDetector(
                 onTap: () {
                   print('calendar top');
+                  _showCalendar();
                 },
                 child: Icon(
                   Icons.calendar_today_outlined,
@@ -286,66 +286,66 @@ class _HomePageState extends State<HomePage>
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 15.0,top:10.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xffba9cff),
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0),bottomRight: Radius.circular(20.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      // spreadRadius: 10,
-                      blurRadius: 15,
-                      offset: Offset(8, 8), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: TableCalendar(
-                  calendarController: _calendarController,
-                  initialCalendarFormat: CalendarFormat.week,
-                  headerVisible: true,
-                  availableCalendarFormats: const {
-                    CalendarFormat.month: 'Month',
-                    CalendarFormat.week: 'Week'
-                  },
-                  daysOfWeekStyle: DaysOfWeekStyle(
-                      weekdayStyle:
-                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                      weekendStyle:
-                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
-                  // events: _events,
-                  // holidays: _holidays,
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  calendarStyle: CalendarStyle(
-                      selectedColor: Colors.deepOrange[400],
-                      todayColor: Colors.deepOrange[200],
-                      markersColor: Colors.brown[700],
-                      outsideDaysVisible: false,
-                      weekdayStyle:
-                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                      weekendStyle:
-                          new TextStyle(fontWeight: FontWeight.w600, fontSize: 18)),
-                  headerStyle: HeaderStyle(
-                    titleTextStyle:
-                        new TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                    formatButtonTextStyle: TextStyle().copyWith(
-                        color: Colors.white,
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w600),
-                    formatButtonDecoration: BoxDecoration(
-                      color: Colors.deepOrange[400],
-                      borderRadius: BorderRadius.circular(16.0),
+              padding: const EdgeInsets.all(15.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          // spreadRadius: 10,
+                          blurRadius: 15,
+                          offset: Offset(8, 8), // changes position of shadow
+                        ),
+                      ],
                     ),
                   ),
-                  onDaySelected: (DateTime day, List events, List holidays) {
-                    print('CALLBACK: _onDaySelected');
-                    // setState(() {
-                    //   _selectedEvents = events;
-                    // });
-                  },
-                  // onVisibleDaysChanged: _onVisibleDaysChanged,
-                  // onCalendarCreated: _onCalendarCreated,
-                ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 14.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Today",
+                                  style: new TextStyle(
+                                      fontSize: 22,
+                                      color: Color(0xFFF67B50),
+                                      fontFamily: "Quicksand",
+                                      fontWeight: FontWeight.w600))),
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("17-11-2020",
+                                  style: new TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black38,
+                                      fontFamily: "Quicksand",
+                                      fontWeight: FontWeight.w600))),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right:14.0),
+                    child: Row(
+                      children: [
+                        Spacer(flex:9),
+                        Icon(Icons.arrow_back_ios_outlined,color: Colors.black38),
+                        Spacer(flex:1),
+                        Icon(Icons.arrow_forward_ios_outlined,color: Colors.black38),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             Flexible(child: ListView(children: _items)),
@@ -363,48 +363,20 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void _showCalendar() {
+    setState(() {
+      if (_calendarSize == 150.0) {
+        _calendarSize = 200.0;
+      } else {
+        _calendarSize = 150.0;
+      }
+    });
+  }
+
   @override
   void refreshList(List<TodoViewModel> todoList) {
     print('refresh list');
     _tasks = todoList;
     setState(() {});
   }
-
-// void _checkboxPress(TodoViewModel item){
-//   this.widget.presenter.toggleItem(item);
-// }
-//
-// void _toggle(TodoViewModel item) async {
-//   // item.complete = !item.complete;
-//   dynamic result = await DB.update(TodoViewModel.table, item);
-//   print(result);
-//   refresh();
-// }
-//
-// void _delete(TodoViewModel item) async {
-//   DB.delete(TodoViewModel.table, item);
-//   refresh();
-// }
-//
-// void _save() async {
-//   Navigator.of(context).pop();
-//   TodoViewModel item = TodoViewModel(task: _task, complete: false);
-//
-//   await DB.insert(TodoViewModel.table, item);
-//   setState(() => _task = '');
-//   refresh();
-// }
-
-// void refresh() async {
-//   List<Map<String, dynamic>> _results = await DB.query(TodoViewModel.table);
-//   _tasks = _results.map((item) => TodoViewModel.fromMap(item)).toList();
-//   setState(() {});
-// }
-// @override
-// void refreshList(List<TodoViewModel> todoList) async {
-//   // List<Map<String, dynamic>> _results = await DB.query(TodoViewModel.table);
-//   // _tasks = _results.map((item) => TodoViewModel.fromMap(item)).toList();
-//   _tasks = todoList;
-//   setState(() {});
-// }
 }
