@@ -216,96 +216,74 @@ class _HomePageState extends State<HomePage>
                             ? Visibility(
                                 visible: true,
                                 child: Container(
+                                  height: 78,
                                   width: double.infinity,
-                                  child: Container(
-                                    height: 70,
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: [
-                                        for (int index = 0;
-                                            index < _categories.length;
-                                            index++)
-                                          Column(
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      for (int index = 0;
+                                          index < _categories.length;
+                                          index++)
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 7.0, right: 7.0),
+                                          padding: const EdgeInsets.only(left: 10.0,right: 10.0,top: 3.0,bottom: 3.0),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                            color: _selectedCategory[
+                                            _categories[index].name]
+                                                ? Color(0xFFF67B50)
+                                                : Colors.transparent,
+                                            // boxShadow: [
+                                            //   BoxShadow(
+                                            //     color: Colors.grey.withOpacity(0.2),
+                                            //     // spreadRadius: 10,
+                                            //     blurRadius: 0,
+                                            //     offset: Offset(0, 4), // changes position of shadow
+                                            //   ),
+                                            // ],
+                                          ),
+                                          child: Column(
                                             children: [
-                                              Container(
-                                                margin: const EdgeInsets.only(left: 20.0, right: 20.0),
-                                                color: _selectedCategory[
-                                                        _categories[index].name]
-                                                    ? Colors.red
-                                                    : Colors.transparent,
-                                                child: IconButton(
-                                                  icon: Icon(
-                                                      _categories[index].icon,
+                                              IconButton(
+                                                icon: Icon(
+                                                    _categories[index].icon,
+                                                    color: _selectedCategory[
+                                                            _categories[index]
+                                                                .name]
+                                                        ? Colors.white70
+                                                        : Colors.black45,
+                                                    size: 30),
+                                                onPressed: () {
+                                                  _selectedCategory.forEach((key, value) {
+                                                    _selectedCategory[key] = false;
+                                                  });
+                                                  setState(() {
+                                                    _selectedCategory[
+                                                            _categories[index]
+                                                                .name] =
+                                                        !_selectedCategory[
+                                                            _categories[index]
+                                                                .name];
+
+                                                  });
+                                                },
+                                              ),
+                                              Text(_categories[index].name,
+                                                  style: TextStyle(
                                                       color: _selectedCategory[
-                                                              _categories[index]
+                                                              _categories[
+                                                                      index]
                                                                   .name]
                                                           ? Colors.white70
                                                           : Colors.black45,
-                                                      size: 30),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _selectedCategory[
-                                                              _categories[index]
-                                                                  .name] =
-                                                          !_selectedCategory[
-                                                              _categories[index]
-                                                                  .name];
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                              Text(_categories[index].name)
+                                                      fontWeight:
+                                                          FontWeight.w700))
                                             ],
-                                          )
-                                      ],
-                                    ),
+                                          ),
+                                        )
+                                    ],
                                   ),
-                                  // child: SingleChildScrollView(
-                                  //   scrollDirection: Axis.horizontal,
-                                  //   child: Container(
-                                  //     color: Colors.green,
-                                  //     child: Row(
-                                  //       mainAxisAlignment:
-                                  //           MainAxisAlignment.spaceAround,
-                                  //       children: [
-                                  //         for (int index = 0;
-                                  //             index < _categories.length;
-                                  //             index++)
-                                  //           Column(
-                                  //             children: [
-                                  //               Container(
-                                  //                 color: _selectedCategory[
-                                  //                         _categories[index].name]
-                                  //                     ? Colors.red
-                                  //                     : Colors.transparent,
-                                  //                 child: IconButton(
-                                  //                   icon: Icon(
-                                  //                       _categories[index].icon,
-                                  //                       color: _selectedCategory[
-                                  //                               _categories[index]
-                                  //                                   .name]
-                                  //                           ? Colors.white70
-                                  //                           : Colors.black45,
-                                  //                       size: 30),
-                                  //                   onPressed: () {
-                                  //                     setState(() {
-                                  //                       _selectedCategory[
-                                  //                               _categories[index]
-                                  //                                   .name] =
-                                  //                           !_selectedCategory[
-                                  //                               _categories[index]
-                                  //                                   .name];
-                                  //                     });
-                                  //                   },
-                                  //                 ),
-                                  //               ),
-                                  //               Text(_categories[index].name)
-                                  //             ],
-                                  //           )
-                                  //       ],
-                                  //     ),
-                                  //   ),
-                                  // ),
                                 ),
                               )
                             : Visibility(
@@ -382,6 +360,8 @@ class _HomePageState extends State<HomePage>
         _taskDetails = "";
         _dateTime = DateTime.now();
       }
+      _categoryTask = false;
+      _detailedText = false;
     });
   }
 
@@ -495,7 +475,8 @@ class _HomePageState extends State<HomePage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _detailedText = false;
+          // _detailedText = false;
+          // _categoryTask = false;
           _create(context);
         },
         tooltip: 'New TODO',
