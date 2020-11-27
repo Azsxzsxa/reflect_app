@@ -1,6 +1,7 @@
 
 import 'package:flutter_mvp/Utils/date_formatter.dart';
 import 'package:flutter_mvp/main/presenter/todo_presenter.dart';
+import 'package:flutter_mvp/main/viewmodel/todo_categorymodel.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
 import 'package:flutter_mvp/service/db.dart';
 
@@ -15,8 +16,14 @@ class TodoInteractor{
   Future<List<TodoViewModel>> getList() async{
     List<Map<String, dynamic>> _results = await DB.todayList(TodoViewModel.table,DateFormatter.getCurrentDate());
     return _results.map((item) => TodoViewModel.fromMap(item)).toList();
-
   }
+
+  Future<List<CategoryViewModel>> getCategoryList() async{
+    List<Map<String, dynamic>> _results = await DB.query(CategoryViewModel.table);
+    return _results.map((item) => CategoryViewModel.fromMap(item)).toList();
+  }
+
+
 
   void deleteItem(TodoViewModel item) async{
     DB.delete(TodoViewModel.table, item);

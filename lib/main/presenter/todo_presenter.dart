@@ -1,3 +1,4 @@
+import 'package:flutter_mvp/main/viewmodel/todo_categorymodel.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
 
 import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/interactor/todo_interactor.dart';
@@ -17,6 +18,7 @@ import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 class TodoPresenter implements InteractorListener{
   TodoView _view;
   List<TodoViewModel> _todoList;
+  List<CategoryViewModel> _categoryList;
   TodoInteractor todoBasicInteractor;
 
   TodoPresenter() {
@@ -26,8 +28,12 @@ class TodoPresenter implements InteractorListener{
 
   void _loadList() async{
     _todoList = await todoBasicInteractor.getList();
+    _categoryList = await todoBasicInteractor.getCategoryList();
     print('load list presenter $_todoList');
+    var yes = _categoryList[0].name;
+    print('load category list presenter $yes');
     _view.refreshList(_todoList);
+    _view.loadedCategories(_categoryList);
   }
 
   set initView(TodoView value) {

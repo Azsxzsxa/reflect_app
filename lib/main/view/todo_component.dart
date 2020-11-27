@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mvp/Utils/date_formatter.dart';
 import 'package:flutter_mvp/main/presenter/todo_presenter.dart';
 import 'package:flutter_mvp/main/view/todo_edit_component.dart';
+import 'package:flutter_mvp/main/viewmodel/todo_categorymodel.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 
@@ -26,10 +26,10 @@ class _HomePageState extends State<HomePage>
   String _taskDetails = "";
   var _dateTime = new DateTime.now();
   List<TodoViewModel> _tasks = [];
-  CalendarController _calendarController;
-  var _calendarSize = 150.0;
+  List<CategoryViewModel> _categories = [];
 
   List<Widget> get _items => _tasks.map((item) => format(item)).toList();
+
   TextStyle _style = TextStyle(
       fontSize: 24,
       color: Colors.black54,
@@ -37,6 +37,16 @@ class _HomePageState extends State<HomePage>
       fontWeight: FontWeight.w600);
 
   bool _detailedText = false;
+  bool _categoryTask = false;
+
+  // var _selectedCategory = {
+  //   'General': false,
+  //   'Routine': false,
+  //   'Home': false,
+  //   'Work': false
+  // };
+
+  Map<String, bool> _selectedCategory = new Map();
 
   FocusNode detailsFocusNode;
 
@@ -45,7 +55,6 @@ class _HomePageState extends State<HomePage>
     this.widget.presenter.initView = this;
     super.initState();
     detailsFocusNode = FocusNode();
-    _calendarController = CalendarController();
   }
 
   @override
@@ -119,6 +128,29 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void formatCategory(CategoryViewModel item) {
+    Column(
+      children: [
+        Container(
+          color: _selectedCategory[item.name] ? Colors.red : Colors.transparent,
+          child: IconButton(
+            icon: Icon(item.icon,
+                color: _selectedCategory[item.name]
+                    ? Colors.white70
+                    : Colors.black45,
+                size: 30),
+            onPressed: () {
+              setState(() {
+                _selectedCategory[item.name] = !_selectedCategory[item.name];
+              });
+            },
+          ),
+        ),
+        Text(item.name)
+      ],
+    );
+  }
+
   void _create(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -173,14 +205,112 @@ class _HomePageState extends State<HomePage>
                               )
                             : Visibility(
                                 visible: false,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      hintText: 'More details ...',
-                                      border: InputBorder.none),
-                                  onChanged: (value) {
-                                    _taskDetails = value;
-                                  },
+                                child: Text(''),
+                              ),
+                        fadeDuration: const Duration(milliseconds: 150),
+                        sizeDuration: const Duration(milliseconds: 300),
+                      ),
+                      AnimatedSizeAndFade(
+                        vsync: this,
+                        child: _categoryTask
+                            ? Visibility(
+                                visible: true,
+                                child: Container(
+                                  width: double.infinity,
+                                  child: Container(
+                                    height: 70,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        for (int index = 0;
+                                            index < _categories.length;
+                                            index++)
+                                          Column(
+                                            children: [
+                                              Container(
+                                                margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+                                                color: _selectedCategory[
+                                                        _categories[index].name]
+                                                    ? Colors.red
+                                                    : Colors.transparent,
+                                                child: IconButton(
+                                                  icon: Icon(
+                                                      _categories[index].icon,
+                                                      color: _selectedCategory[
+                                                              _categories[index]
+                                                                  .name]
+                                                          ? Colors.white70
+                                                          : Colors.black45,
+                                                      size: 30),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _selectedCategory[
+                                                              _categories[index]
+                                                                  .name] =
+                                                          !_selectedCategory[
+                                                              _categories[index]
+                                                                  .name];
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              Text(_categories[index].name)
+                                            ],
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                  // child: SingleChildScrollView(
+                                  //   scrollDirection: Axis.horizontal,
+                                  //   child: Container(
+                                  //     color: Colors.green,
+                                  //     child: Row(
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.spaceAround,
+                                  //       children: [
+                                  //         for (int index = 0;
+                                  //             index < _categories.length;
+                                  //             index++)
+                                  //           Column(
+                                  //             children: [
+                                  //               Container(
+                                  //                 color: _selectedCategory[
+                                  //                         _categories[index].name]
+                                  //                     ? Colors.red
+                                  //                     : Colors.transparent,
+                                  //                 child: IconButton(
+                                  //                   icon: Icon(
+                                  //                       _categories[index].icon,
+                                  //                       color: _selectedCategory[
+                                  //                               _categories[index]
+                                  //                                   .name]
+                                  //                           ? Colors.white70
+                                  //                           : Colors.black45,
+                                  //                       size: 30),
+                                  //                   onPressed: () {
+                                  //                     setState(() {
+                                  //                       _selectedCategory[
+                                  //                               _categories[index]
+                                  //                                   .name] =
+                                  //                           !_selectedCategory[
+                                  //                               _categories[index]
+                                  //                                   .name];
+                                  //                     });
+                                  //                   },
+                                  //                 ),
+                                  //               ),
+                                  //               Text(_categories[index].name)
+                                  //             ],
+                                  //           )
+                                  //       ],
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ),
+                              )
+                            : Visibility(
+                                visible: false,
+                                child: Text(''),
                               ),
                         fadeDuration: const Duration(milliseconds: 150),
                         sizeDuration: const Duration(milliseconds: 300),
@@ -219,6 +349,16 @@ class _HomePageState extends State<HomePage>
                               });
                             },
                           ),
+                          IconButton(
+                            icon: Icon(Icons.category_outlined,
+                                color: Colors.black45),
+                            tooltip: 'Select category',
+                            onPressed: () {
+                              setState(() {
+                                _categoryTask = !_categoryTask;
+                              });
+                            },
+                          )
                         ],
                       ),
                     ],
@@ -271,7 +411,6 @@ class _HomePageState extends State<HomePage>
               child: GestureDetector(
                 onTap: () {
                   print('calendar top');
-                  _showCalendar();
                 },
                 child: Icon(
                   Icons.calendar_today_outlined,
@@ -294,7 +433,7 @@ class _HomePageState extends State<HomePage>
                     width: double.infinity,
                     height: 75,
                     decoration: BoxDecoration(
-                      color: Colors.white70,
+                      color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(20.0)),
                       boxShadow: [
                         BoxShadow(
@@ -317,10 +456,10 @@ class _HomePageState extends State<HomePage>
                           Align(
                               alignment: Alignment.centerLeft,
                               child: Text("Today",
-                                  style: new TextStyle(
+                                  style: TextStyle(
                                       fontSize: 22,
                                       color: Color(0xFFF67B50),
-                                      fontFamily: "Quicksand",
+                                      // fontFamily: "Quicksand",
                                       fontWeight: FontWeight.w600))),
                           Align(
                               alignment: Alignment.centerLeft,
@@ -335,13 +474,15 @@ class _HomePageState extends State<HomePage>
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right:14.0),
+                    padding: const EdgeInsets.only(right: 14.0),
                     child: Row(
                       children: [
-                        Spacer(flex:9),
-                        Icon(Icons.arrow_back_ios_outlined,color: Colors.black38),
-                        Spacer(flex:1),
-                        Icon(Icons.arrow_forward_ios_outlined,color: Colors.black38),
+                        Spacer(flex: 9),
+                        Icon(Icons.arrow_back_ios_outlined,
+                            color: Colors.black38),
+                        Spacer(flex: 1),
+                        Icon(Icons.arrow_forward_ios_outlined,
+                            color: Colors.black38),
                       ],
                     ),
                   ),
@@ -363,20 +504,18 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void _showCalendar() {
-    setState(() {
-      if (_calendarSize == 150.0) {
-        _calendarSize = 200.0;
-      } else {
-        _calendarSize = 150.0;
-      }
-    });
-  }
-
   @override
   void refreshList(List<TodoViewModel> todoList) {
     print('refresh list');
     _tasks = todoList;
     setState(() {});
+  }
+
+  @override
+  void loadedCategories(List<CategoryViewModel> categoryList) {
+    _categories = categoryList;
+    _categories.forEach((element) {
+      _selectedCategory[element.name] = false;
+    });
   }
 }
