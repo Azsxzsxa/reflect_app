@@ -15,7 +15,7 @@ import 'file:///D:/flutter_workspace/flutter_mvp/lib/main/view/todo_view.dart';
 //
 // }
 
-class TodoPresenter implements InteractorListener{
+class TodoPresenter implements InteractorListener {
   TodoView _view;
   List<TodoViewModel> _todoList;
   List<CategoryViewModel> _categoryList;
@@ -26,12 +26,9 @@ class TodoPresenter implements InteractorListener{
     this.todoBasicInteractor = new TodoInteractor(this);
   }
 
-  void _loadList() async{
+  void _loadList() async {
     _todoList = await todoBasicInteractor.getList();
     _categoryList = await todoBasicInteractor.getCategoryList();
-    print('load list presenter $_todoList');
-    var yes = _categoryList[0].name;
-    print('load category list presenter $yes');
     _view.refreshList(_todoList);
     _view.loadedCategories(_categoryList);
   }
@@ -39,18 +36,18 @@ class TodoPresenter implements InteractorListener{
   set initView(TodoView value) {
     _view = value;
     _loadList();
-
   }
 
-  void deleteItem(TodoViewModel item){
+  void deleteItem(TodoViewModel item) {
     todoBasicInteractor.deleteItem(item);
   }
 
-  void toggleItem(TodoViewModel item){
+  void toggleItem(TodoViewModel item) {
     todoBasicInteractor.update(item);
   }
 
-  void updateItem(int id,bool complete, String task,String details, String date, String category) {
+  void updateItem(int id, bool complete, String task, String details,
+      String date, String category) {
     TodoViewModel updatedTask = new TodoViewModel();
     updatedTask.id = id;
     updatedTask.complete = complete;
@@ -61,25 +58,22 @@ class TodoPresenter implements InteractorListener{
     todoBasicInteractor.update(updatedTask);
   }
 
-  void saveItem(TodoViewModel item){
+  void saveItem(TodoViewModel item) {
     todoBasicInteractor.saveItem(item);
   }
 
-  void refresh() async{
-    List<TodoViewModel> tasklist = await todoBasicInteractor.getList();
-    _todoList = tasklist;
-    _view.refreshList(_todoList);
-  }
-
   @override
-  void onUpdateSuccess() {
-    refresh();
+  void onUpdateSuccess() async {
+    _todoList = await todoBasicInteractor.getList();
+    Map<String, List<TodoViewModel>> tasksMap = new Map();
+
+    _todoList.forEach((element) {
+      if (tasksMap[element.category] == null) {
+        tasksMap[element.category] = [];
+      }
+      tasksMap[element.category].add(element);
+    });
+
     _view.refreshList(_todoList);
   }
-
-
-
-
-
-  
 }

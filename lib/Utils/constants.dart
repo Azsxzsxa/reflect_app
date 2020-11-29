@@ -10,7 +10,7 @@ class Constants{
     CategoryViewModel(name:"Work",icon:IconData(58657,fontFamily: "MaterialIcons")),
   ];
 
-  
+
 
 
 }
