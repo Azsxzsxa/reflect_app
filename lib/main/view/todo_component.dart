@@ -38,13 +38,7 @@ class _HomePageState extends State<HomePage>
 
   bool _detailedText = false;
   bool _categoryTask = false;
-
-  // var _selectedCategory = {
-  //   'General': false,
-  //   'Routine': false,
-  //   'Home': false,
-  //   'Work': false
-  // };
+  String _selectedCategoryTask = "General";
 
   Map<String, bool> _selectedCategory = new Map();
 
@@ -227,11 +221,16 @@ class _HomePageState extends State<HomePage>
                                         Container(
                                           margin: const EdgeInsets.only(
                                               left: 7.0, right: 7.0),
-                                          padding: const EdgeInsets.only(left: 10.0,right: 10.0,top: 3.0,bottom: 3.0),
+                                          padding: const EdgeInsets.only(
+                                              left: 10.0,
+                                              right: 10.0,
+                                              top: 3.0,
+                                              bottom: 3.0),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12.0)),
                                             color: _selectedCategory[
-                                            _categories[index].name]
+                                                    _categories[index].name]
                                                 ? Color(0xFFF67B50)
                                                 : Colors.transparent,
                                             // boxShadow: [
@@ -255,25 +254,27 @@ class _HomePageState extends State<HomePage>
                                                         : Colors.black45,
                                                     size: 30),
                                                 onPressed: () {
-                                                  _selectedCategory.forEach((key, value) {
-                                                    _selectedCategory[key] = false;
+                                                  _selectedCategory
+                                                      .forEach((key, value) {
+                                                    _selectedCategory[key] =
+                                                        false;
                                                   });
                                                   setState(() {
+                                                    _selectedCategoryTask =
+                                                        _categories[index].name;
                                                     _selectedCategory[
                                                             _categories[index]
                                                                 .name] =
                                                         !_selectedCategory[
                                                             _categories[index]
                                                                 .name];
-
                                                   });
                                                 },
                                               ),
                                               Text(_categories[index].name,
                                                   style: TextStyle(
                                                       color: _selectedCategory[
-                                                              _categories[
-                                                                      index]
+                                                              _categories[index]
                                                                   .name]
                                                           ? Colors.white70
                                                           : Colors.black45,
@@ -360,6 +361,12 @@ class _HomePageState extends State<HomePage>
         _taskDetails = "";
         _dateTime = DateTime.now();
       }
+      _selectedCategory
+          .forEach((key, value) {
+        _selectedCategory[key] =
+        false;
+      });
+      _selectedCategoryTask = "General";
       _categoryTask = false;
       _detailedText = false;
     });
