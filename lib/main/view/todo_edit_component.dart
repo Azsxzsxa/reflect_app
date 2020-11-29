@@ -20,6 +20,7 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
   String _displayDate;
   String _displayTask;
   String _displayDetails;
+  String _displayCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +84,17 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
                           border: InputBorder.none,
                           hintText: 'Add Deatils',
                           icon: Icon(Icons.article_outlined))),
+                  TextFormField(
+                      style: TextStyle(fontSize: 20),
+                      onChanged: (text) {
+                        _displayCategory = text;
+                      },
+                      controller: setInitialText(_displayCategory == null
+                          ? widget.task.category
+                          : _displayCategory),
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          icon: Icon(Icons.category_outlined))),
                   Container(
                     child: Stack(
                       children: [
@@ -145,7 +157,10 @@ class _EditTodoScreenState extends State<EditTodoScreen> {
     if (_displayDetails == null) {
       _displayDetails = widget.task.details;
     }
+    if (_displayCategory == null) {
+      _displayCategory = widget.task.category;
+    }
     this.widget.presenter.updateItem(
-        widget.task.id, widget.task.complete, _displayTask, _displayDetails, _displayDate);
+        widget.task.id, widget.task.complete, _displayTask, _displayDetails, _displayDate, _displayCategory);
   }
 }

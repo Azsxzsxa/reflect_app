@@ -1,4 +1,4 @@
-import 'package:flutter_mvp/Utils/Constants.dart';
+import 'package:flutter_mvp/Utils/constants.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_categorymodel.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_viewmodel.dart';
 import 'package:sqflite/sqflite.dart';
@@ -23,13 +23,11 @@ abstract class DB {
 
   static void onCreate(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE todo_items (id INTEGER PRIMARY KEY NOT NULL, task STRING, details STRING,complete BOOLEAN, date STRING)');
+      'CREATE TABLE todo_items (id INTEGER PRIMARY KEY NOT NULL, task STRING, details STRING,complete BOOLEAN, date STRING, category STRING)');
     await db.execute(
         'CREATE TABLE todo_categories (id INTEGER PRIMARY KEY NOT NULL, name STRING, codePoint INTEGER, fontFamily STRING)');
 
     Constants.todoCategoryList.forEach((element) async{
-      print('will add');
-      print(element.name);
       await db.insert(CategoryViewModel.table, element.toMap());
     });
 

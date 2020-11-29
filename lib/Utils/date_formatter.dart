@@ -9,7 +9,5 @@ class DateFormatter{
   }
   static DateTime stringToDate(String strDate){
     return new DateFormat("MM/dd/yyyy").parse(strDate);
-    // return DateTime.parse(strDate);
-
   }
 }

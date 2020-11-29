@@ -2,6 +2,7 @@ import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mvp/Utils/date_formatter.dart';
+import 'package:flutter_mvp/Utils/text_styles.dart';
 import 'package:flutter_mvp/main/presenter/todo_presenter.dart';
 import 'package:flutter_mvp/main/view/todo_edit_component.dart';
 import 'package:flutter_mvp/main/viewmodel/todo_categorymodel.dart';
@@ -24,24 +25,18 @@ class _HomePageState extends State<HomePage>
     implements TodoView {
   String _taskText = "";
   String _taskDetails = "";
-  var _dateTime = new DateTime.now();
+  String _taskCategory = "General";
+  DateTime _taskDate = new DateTime.now();
+
   List<TodoViewModel> _tasks = [];
   List<CategoryViewModel> _categories = [];
-
   List<Widget> get _items => _tasks.map((item) => format(item)).toList();
 
-  TextStyle _style = TextStyle(
-      fontSize: 24,
-      color: Colors.black54,
-      fontFamily: "Quicksand",
-      fontWeight: FontWeight.w600);
+  bool _isDetailedShown = false;
+  bool _isCategoryShown = false;
 
-  bool _detailedText = false;
-  bool _categoryTask = false;
-  String _selectedCategoryTask = "General";
 
-  Map<String, bool> _selectedCategory = new Map();
-
+  Map<String, bool> _categorySelectionMap = new Map();
   FocusNode detailsFocusNode;
 
   @override
@@ -103,7 +98,7 @@ class _HomePageState extends State<HomePage>
                         child: RichText(
                           text: TextSpan(
                             text: item.task,
-                            style: _style,
+                            style: TextStyles.mediumBoldStyle,
                           ),
                         ),
                       ),
@@ -126,16 +121,16 @@ class _HomePageState extends State<HomePage>
     Column(
       children: [
         Container(
-          color: _selectedCategory[item.name] ? Colors.red : Colors.transparent,
+          color: _categorySelectionMap[item.name] ? Colors.red : Colors.transparent,
           child: IconButton(
             icon: Icon(item.icon,
-                color: _selectedCategory[item.name]
+                color: _categorySelectionMap[item.name]
                     ? Colors.white70
                     : Colors.black45,
                 size: 30),
             onPressed: () {
               setState(() {
-                _selectedCategory[item.name] = !_selectedCategory[item.name];
+                _categorySelectionMap[item.name] = !_categorySelectionMap[item.name];
               });
             },
           ),
@@ -184,7 +179,7 @@ class _HomePageState extends State<HomePage>
                       ),
                       AnimatedSizeAndFade(
                         vsync: this,
-                        child: _detailedText
+                        child: _isDetailedShown
                             ? Visibility(
                                 visible: true,
                                 child: TextField(
@@ -206,7 +201,7 @@ class _HomePageState extends State<HomePage>
                       ),
                       AnimatedSizeAndFade(
                         vsync: this,
-                        child: _categoryTask
+                        child: _isCategoryShown
                             ? Visibility(
                                 visible: true,
                                 child: Container(
@@ -229,7 +224,7 @@ class _HomePageState extends State<HomePage>
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(12.0)),
-                                            color: _selectedCategory[
+                                            color: _categorySelectionMap[
                                                     _categories[index].name]
                                                 ? Color(0xFFF67B50)
                                                 : Colors.transparent,
@@ -247,25 +242,25 @@ class _HomePageState extends State<HomePage>
                                               IconButton(
                                                 icon: Icon(
                                                     _categories[index].icon,
-                                                    color: _selectedCategory[
+                                                    color: _categorySelectionMap[
                                                             _categories[index]
                                                                 .name]
                                                         ? Colors.white70
                                                         : Colors.black45,
                                                     size: 30),
                                                 onPressed: () {
-                                                  _selectedCategory
+                                                  _categorySelectionMap
                                                       .forEach((key, value) {
-                                                    _selectedCategory[key] =
+                                                    _categorySelectionMap[key] =
                                                         false;
                                                   });
                                                   setState(() {
-                                                    _selectedCategoryTask =
+                                                    _taskCategory =
                                                         _categories[index].name;
-                                                    _selectedCategory[
+                                                    _categorySelectionMap[
                                                             _categories[index]
                                                                 .name] =
-                                                        !_selectedCategory[
+                                                        !_categorySelectionMap[
                                                             _categories[index]
                                                                 .name];
                                                   });
@@ -273,7 +268,7 @@ class _HomePageState extends State<HomePage>
                                               ),
                                               Text(_categories[index].name,
                                                   style: TextStyle(
-                                                      color: _selectedCategory[
+                                                      color: _categorySelectionMap[
                                                               _categories[index]
                                                                   .name]
                                                           ? Colors.white70
@@ -299,19 +294,17 @@ class _HomePageState extends State<HomePage>
                           IconButton(
                             icon: Icon(Icons.calendar_today_outlined,
                                 color: Colors.black45),
-                            tooltip: 'Increase volume by 10',
+                            tooltip: 'Choose date',
                             onPressed: () {
                               showDatePicker(
                                       context: context,
-                                      initialDate: _dateTime == null
+                                      initialDate: _taskDate == null
                                           ? DateTime.now()
-                                          : _dateTime,
+                                          : _taskDate,
                                       firstDate: DateTime(2001),
                                       lastDate: DateTime(2021))
                                   .then((date) {
-                                setState(() {
-                                  _dateTime = date;
-                                });
+                                _taskDate = date;
                               });
                             },
                           ),
@@ -321,8 +314,8 @@ class _HomePageState extends State<HomePage>
                             tooltip: 'Add details',
                             onPressed: () {
                               setState(() {
-                                _detailedText = !_detailedText;
-                                if (_detailedText) {
+                                _isDetailedShown = !_isDetailedShown;
+                                if (_isDetailedShown) {
                                   detailsFocusNode.requestFocus();
                                 }
                               });
@@ -334,7 +327,7 @@ class _HomePageState extends State<HomePage>
                             tooltip: 'Select category',
                             onPressed: () {
                               setState(() {
-                                _categoryTask = !_categoryTask;
+                                _isCategoryShown = !_isCategoryShown;
                               });
                             },
                           )
@@ -351,24 +344,23 @@ class _HomePageState extends State<HomePage>
       },
     ).whenComplete(() {
       if (_taskText.isNotEmpty) {
-        String taskDate = DateFormatter.getFormattedDate(_dateTime);
+        String taskDate = DateFormatter.getFormattedDate(_taskDate);
         this.widget.presenter.saveItem(new TodoViewModel(
             task: _taskText,
             details: _taskDetails,
             complete: false,
-            date: taskDate));
+            date: taskDate,
+            category: _taskCategory));
         _taskText = "";
         _taskDetails = "";
-        _dateTime = DateTime.now();
+        _taskDate = DateTime.now();
       }
-      _selectedCategory
-          .forEach((key, value) {
-        _selectedCategory[key] =
-        false;
+      _categorySelectionMap.forEach((key, value) {
+        _categorySelectionMap[key] = false;
       });
-      _selectedCategoryTask = "General";
-      _categoryTask = false;
-      _detailedText = false;
+      _taskCategory = "General";
+      _isCategoryShown = false;
+      _isDetailedShown = false;
     });
   }
 
@@ -503,7 +495,7 @@ class _HomePageState extends State<HomePage>
   void loadedCategories(List<CategoryViewModel> categoryList) {
     _categories = categoryList;
     _categories.forEach((element) {
-      _selectedCategory[element.name] = false;
+      _categorySelectionMap[element.name] = false;
     });
   }
 }

@@ -50,13 +50,14 @@ class TodoPresenter implements InteractorListener{
     todoBasicInteractor.update(item);
   }
 
-  void updateItem(int id,bool complete, String task,String details, String date) {
+  void updateItem(int id,bool complete, String task,String details, String date, String category) {
     TodoViewModel updatedTask = new TodoViewModel();
     updatedTask.id = id;
     updatedTask.complete = complete;
     updatedTask.task = task;
     updatedTask.details = details;
     updatedTask.date = date;
+    updatedTask.category = category;
     todoBasicInteractor.update(updatedTask);
   }
 
