@@ -28,13 +28,15 @@ class _HomePageState extends State<HomePage>
   String _taskCategory = "General";
   DateTime _taskDate = new DateTime.now();
 
+  Map<String, List<TodoViewModel>> _tasksMap = new Map();
   List<TodoViewModel> _tasks = [];
   List<CategoryViewModel> _categories = [];
+  List<CategoryViewModel> _presentCategories = [];
+
   List<Widget> get _items => _tasks.map((item) => format(item)).toList();
 
   bool _isDetailedShown = false;
   bool _isCategoryShown = false;
-
 
   Map<String, bool> _categorySelectionMap = new Map();
   FocusNode detailsFocusNode;
@@ -60,7 +62,7 @@ class _HomePageState extends State<HomePage>
         padding: EdgeInsets.fromLTRB(12, 6, 12, 4),
         // child: FlatButton(
         child:
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           // Icon(item.complete == true ? Icons.radio_button_checked : Icons.radio_button_unchecked),
           Checkbox(
             value: item.complete,
@@ -77,34 +79,36 @@ class _HomePageState extends State<HomePage>
               children: <Widget>[
                 Container(
                     child: Stack(
-                  alignment: Alignment.centerLeft,
-                  children: <Widget>[
-                    SizedBox(
-                      width: double.infinity,
-                      child: FlatButton(
-                        onPressed: () => {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return EditTodoScreen(
-                                task: item, presenter: this.widget.presenter);
-                          }))
-                        },
-                        child: null,
-                      ),
-                    ),
-                    IgnorePointer(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: RichText(
-                          text: TextSpan(
-                            text: item.task,
-                            style: TextStyles.mediumBoldStyle,
+                      alignment: Alignment.centerLeft,
+                      children: <Widget>[
+                        SizedBox(
+                          width: double.infinity,
+                          child: FlatButton(
+                            onPressed: () =>
+                            {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                    return EditTodoScreen(
+                                        task: item,
+                                        presenter: this.widget.presenter);
+                                  }))
+                            },
+                            child: null,
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                )),
+                        IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                text: item.task,
+                                style: TextStyles.mediumBoldStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
               ],
             ),
           ),
@@ -121,7 +125,9 @@ class _HomePageState extends State<HomePage>
     Column(
       children: [
         Container(
-          color: _categorySelectionMap[item.name] ? Colors.red : Colors.transparent,
+          color: _categorySelectionMap[item.name]
+              ? Colors.red
+              : Colors.transparent,
           child: IconButton(
             icon: Icon(item.icon,
                 color: _categorySelectionMap[item.name]
@@ -130,7 +136,8 @@ class _HomePageState extends State<HomePage>
                 size: 30),
             onPressed: () {
               setState(() {
-                _categorySelectionMap[item.name] = !_categorySelectionMap[item.name];
+                _categorySelectionMap[item.name] =
+                !_categorySelectionMap[item.name];
               });
             },
           ),
@@ -149,198 +156,205 @@ class _HomePageState extends State<HomePage>
       builder: (context) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        decoration: InputDecoration(
-                            hintText: 'Today I will ...',
-                            border: InputBorder.none),
-                        onChanged: (value) {
-                          _taskText = value;
-                        },
-                        autofocus: true,
-                      ),
-                      AnimatedSizeAndFade(
-                        vsync: this,
-                        child: _isDetailedShown
-                            ? Visibility(
-                                visible: true,
-                                child: TextField(
-                                  focusNode: detailsFocusNode,
-                                  decoration: InputDecoration(
-                                      hintText: 'More details ...',
-                                      border: InputBorder.none),
-                                  onChanged: (value) {
-                                    _taskDetails = value;
-                                  },
-                                ),
-                              )
-                            : Visibility(
-                                visible: false,
-                                child: Text(''),
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery
+                              .of(context)
+                              .viewInsets
+                              .bottom),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(
+                                hintText: 'Today I will ...',
+                                border: InputBorder.none),
+                            onChanged: (value) {
+                              _taskText = value;
+                            },
+                            autofocus: true,
+                          ),
+                          AnimatedSizeAndFade(
+                            vsync: this,
+                            child: _isDetailedShown
+                                ? Visibility(
+                              visible: true,
+                              child: TextField(
+                                focusNode: detailsFocusNode,
+                                decoration: InputDecoration(
+                                    hintText: 'More details ...',
+                                    border: InputBorder.none),
+                                onChanged: (value) {
+                                  _taskDetails = value;
+                                },
                               ),
-                        fadeDuration: const Duration(milliseconds: 150),
-                        sizeDuration: const Duration(milliseconds: 300),
-                      ),
-                      AnimatedSizeAndFade(
-                        vsync: this,
-                        child: _isCategoryShown
-                            ? Visibility(
-                                visible: true,
-                                child: Container(
-                                  height: 78,
-                                  width: double.infinity,
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: [
-                                      for (int index = 0;
-                                          index < _categories.length;
-                                          index++)
-                                        Container(
-                                          margin: const EdgeInsets.only(
-                                              left: 7.0, right: 7.0),
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0,
-                                              right: 10.0,
-                                              top: 3.0,
-                                              bottom: 3.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(12.0)),
-                                            color: _categorySelectionMap[
-                                                    _categories[index].name]
-                                                ? Color(0xFFF67B50)
-                                                : Colors.transparent,
-                                            // boxShadow: [
-                                            //   BoxShadow(
-                                            //     color: Colors.grey.withOpacity(0.2),
-                                            //     // spreadRadius: 10,
-                                            //     blurRadius: 0,
-                                            //     offset: Offset(0, 4), // changes position of shadow
-                                            //   ),
-                                            // ],
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              IconButton(
-                                                icon: Icon(
-                                                    _categories[index].icon,
-                                                    color: _categorySelectionMap[
-                                                            _categories[index]
-                                                                .name]
+                            )
+                                : Visibility(
+                              visible: false,
+                              child: Text(''),
+                            ),
+                            fadeDuration: const Duration(milliseconds: 150),
+                            sizeDuration: const Duration(milliseconds: 300),
+                          ),
+                          AnimatedSizeAndFade(
+                            vsync: this,
+                            child: _isCategoryShown
+                                ? Visibility(
+                              visible: true,
+                              child: Container(
+                                height: 78,
+                                width: double.infinity,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    for (int index = 0;
+                                    index < _categories.length;
+                                    index++)
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 7.0, right: 7.0),
+                                        padding: const EdgeInsets.only(
+                                            left: 10.0,
+                                            right: 10.0,
+                                            top: 3.0,
+                                            bottom: 3.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(12.0)),
+                                          color: _categorySelectionMap[
+                                          _categories[index].name]
+                                              ? Color(0xFFF67B50)
+                                              : Colors.transparent,
+                                          // boxShadow: [
+                                          //   BoxShadow(
+                                          //     color: Colors.grey.withOpacity(0.2),
+                                          //     // spreadRadius: 10,
+                                          //     blurRadius: 0,
+                                          //     offset: Offset(0, 4), // changes position of shadow
+                                          //   ),
+                                          // ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                  _categories[index].icon,
+                                                  color:
+                                                  _categorySelectionMap[
+                                                  _categories[
+                                                  index]
+                                                      .name]
+                                                      ? Colors.white70
+                                                      : Colors.black45,
+                                                  size: 30),
+                                              onPressed: () {
+                                                _categorySelectionMap
+                                                    .forEach((key, value) {
+                                                  _categorySelectionMap[key] =
+                                                  false;
+                                                });
+                                                setState(() {
+                                                  _taskCategory =
+                                                      _categories[index].name;
+                                                  _categorySelectionMap[
+                                                  _categories[index]
+                                                      .name] =
+                                                  !_categorySelectionMap[
+                                                  _categories[index]
+                                                      .name];
+                                                });
+                                              },
+                                            ),
+                                            Text(_categories[index].name,
+                                                style: TextStyle(
+                                                    color:
+                                                    _categorySelectionMap[
+                                                    _categories[
+                                                    index]
+                                                        .name]
                                                         ? Colors.white70
                                                         : Colors.black45,
-                                                    size: 30),
-                                                onPressed: () {
-                                                  _categorySelectionMap
-                                                      .forEach((key, value) {
-                                                    _categorySelectionMap[key] =
-                                                        false;
-                                                  });
-                                                  setState(() {
-                                                    _taskCategory =
-                                                        _categories[index].name;
-                                                    _categorySelectionMap[
-                                                            _categories[index]
-                                                                .name] =
-                                                        !_categorySelectionMap[
-                                                            _categories[index]
-                                                                .name];
-                                                  });
-                                                },
-                                              ),
-                                              Text(_categories[index].name,
-                                                  style: TextStyle(
-                                                      color: _categorySelectionMap[
-                                                              _categories[index]
-                                                                  .name]
-                                                          ? Colors.white70
-                                                          : Colors.black45,
-                                                      fontWeight:
-                                                          FontWeight.w700))
-                                            ],
-                                          ),
-                                        )
-                                    ],
-                                  ),
+                                                    fontWeight:
+                                                    FontWeight.w700))
+                                          ],
+                                        ),
+                                      )
+                                  ],
                                 ),
-                              )
-                            : Visibility(
-                                visible: false,
-                                child: Text(''),
                               ),
-                        fadeDuration: const Duration(milliseconds: 150),
-                        sizeDuration: const Duration(milliseconds: 300),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.calendar_today_outlined,
-                                color: Colors.black45),
-                            tooltip: 'Choose date',
-                            onPressed: () {
-                              showDatePicker(
+                            )
+                                : Visibility(
+                              visible: false,
+                              child: Text(''),
+                            ),
+                            fadeDuration: const Duration(milliseconds: 150),
+                            sizeDuration: const Duration(milliseconds: 300),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.calendar_today_outlined,
+                                    color: Colors.black45),
+                                tooltip: 'Choose date',
+                                onPressed: () {
+                                  showDatePicker(
                                       context: context,
                                       initialDate: _taskDate == null
                                           ? DateTime.now()
                                           : _taskDate,
                                       firstDate: DateTime(2001),
                                       lastDate: DateTime(2021))
-                                  .then((date) {
-                                _taskDate = date;
-                              });
-                            },
+                                      .then((date) {
+                                    _taskDate = date;
+                                  });
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.article_outlined,
+                                    color: Colors.black45),
+                                tooltip: 'Add details',
+                                onPressed: () {
+                                  setState(() {
+                                    _isDetailedShown = !_isDetailedShown;
+                                    if (_isDetailedShown) {
+                                      detailsFocusNode.requestFocus();
+                                    }
+                                  });
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.category_outlined,
+                                    color: Colors.black45),
+                                tooltip: 'Select category',
+                                onPressed: () {
+                                  setState(() {
+                                    _isCategoryShown = !_isCategoryShown;
+                                  });
+                                },
+                              )
+                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.article_outlined,
-                                color: Colors.black45),
-                            tooltip: 'Add details',
-                            onPressed: () {
-                              setState(() {
-                                _isDetailedShown = !_isDetailedShown;
-                                if (_isDetailedShown) {
-                                  detailsFocusNode.requestFocus();
-                                }
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.category_outlined,
-                                color: Colors.black45),
-                            tooltip: 'Select category',
-                            onPressed: () {
-                              setState(() {
-                                _isCategoryShown = !_isCategoryShown;
-                              });
-                            },
-                          )
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
                 ),
-                SizedBox(height: 10),
-              ],
-            ),
-          );
-        });
+              );
+            });
       },
     ).whenComplete(() {
       if (_taskText.isNotEmpty) {
@@ -468,7 +482,35 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             ),
-            Flexible(child: ListView(children: _items)),
+            Flexible(child: ListView(children: [
+              for(int index = 0; index < _tasksMap.length; index++)
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          Icon(_presentCategories[index].icon),
+                          Text(_presentCategories[index].name)
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 7,
+                      child: Column(
+                        children: [
+                          for(int taskIndex = 0; taskIndex <
+                              _tasksMap[_presentCategories[index].name]
+                                  .length; taskIndex++)
+                            Text(_tasksMap[_presentCategories[index].name][taskIndex]
+                                .task)
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+            ]
+            )),
           ],
         ),
       ),
@@ -485,9 +527,28 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  void refreshList(List<TodoViewModel> todoList) {
+  void refreshList(Map<String, List<TodoViewModel>> tasksMap,List<CategoryViewModel> categoryList) {
     print('refresh list');
-    _tasks = todoList;
+    _presentCategories = [];
+    _tasksMap = tasksMap;
+    _categories = categoryList;
+    _categories.forEach((element) {
+      _categorySelectionMap[element.name] = false;
+    });
+    _tasksMap.forEach((key, value) {
+      var category = _categories.where((element) {
+        print(key);
+        return element.name == key;
+      });
+      // print(category);
+      _presentCategories.add(category.first);
+    });
+    print('map size');
+    print(_presentCategories.length);
+    // print(_tasksMap[_presentCategories[0].name].first.task);
+    // print(_tasksMap[_presentCategories[0].name][0]
+    //     .task);
+
     setState(() {});
   }
 
@@ -497,5 +558,15 @@ class _HomePageState extends State<HomePage>
     _categories.forEach((element) {
       _categorySelectionMap[element.name] = false;
     });
+    // _tasksMap.forEach((key, value) {
+    //   var category = _categories.where((element) {
+    //     print(element.name);
+    //     print(key);
+    //     return element.name == key;
+    //   });
+    //   // print(category);
+    //   _presentCategories.add(category.first);
+    // });
+    // setState(() {});
   }
 }

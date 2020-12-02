@@ -27,10 +27,20 @@ class TodoPresenter implements InteractorListener {
   }
 
   void _loadList() async {
-    _todoList = await todoBasicInteractor.getList();
     _categoryList = await todoBasicInteractor.getCategoryList();
-    _view.refreshList(_todoList);
-    _view.loadedCategories(_categoryList);
+    _todoList = await todoBasicInteractor.getList();
+
+
+    Map<String, List<TodoViewModel>> tasksMap = new Map();
+
+    _todoList.forEach((element) {
+      if (tasksMap[element.category] == null) {
+        tasksMap[element.category] = [];
+      }
+      tasksMap[element.category].add(element);
+    });
+    _view.refreshList(tasksMap,_categoryList);
+    // _view.loadedCategories(_categoryList);
   }
 
   set initView(TodoView value) {
@@ -65,6 +75,7 @@ class TodoPresenter implements InteractorListener {
   @override
   void onUpdateSuccess() async {
     _todoList = await todoBasicInteractor.getList();
+    _categoryList = await todoBasicInteractor.getCategoryList();
     Map<String, List<TodoViewModel>> tasksMap = new Map();
 
     _todoList.forEach((element) {
@@ -74,6 +85,6 @@ class TodoPresenter implements InteractorListener {
       tasksMap[element.category].add(element);
     });
 
-    _view.refreshList(_todoList);
+    _view.refreshList(tasksMap,_categoryList);
   }
 }
