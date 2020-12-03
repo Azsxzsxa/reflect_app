@@ -59,10 +59,10 @@ class _HomePageState extends State<HomePage>
     return Dismissible(
       key: Key(item.id.toString()),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(12, 6, 12, 4),
+        padding: EdgeInsets.fromLTRB(6, 0, 12, 0),
         // child: FlatButton(
         child:
-        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment:CrossAxisAlignment.start,children: <Widget>[
           // Icon(item.complete == true ? Icons.radio_button_checked : Icons.radio_button_unchecked),
           Checkbox(
             value: item.complete,
@@ -118,32 +118,6 @@ class _HomePageState extends State<HomePage>
         _tasks.remove(item);
         this.widget.presenter.deleteItem(item);
       },
-    );
-  }
-
-  void formatCategory(CategoryViewModel item) {
-    Column(
-      children: [
-        Container(
-          color: _categorySelectionMap[item.name]
-              ? Colors.red
-              : Colors.transparent,
-          child: IconButton(
-            icon: Icon(item.icon,
-                color: _categorySelectionMap[item.name]
-                    ? Colors.white70
-                    : Colors.black45,
-                size: 30),
-            onPressed: () {
-              setState(() {
-                _categorySelectionMap[item.name] =
-                !_categorySelectionMap[item.name];
-              });
-            },
-          ),
-        ),
-        Text(item.name)
-      ],
     );
   }
 
@@ -484,30 +458,38 @@ class _HomePageState extends State<HomePage>
             ),
             Flexible(child: ListView(children: [
               for(int index = 0; index < _tasksMap.length; index++)
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          Icon(_presentCategories[index].icon),
-                          Text(_presentCategories[index].name)
-                        ],
+                Container(
+                  margin: const EdgeInsets.only(bottom:50.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          margin: const EdgeInsets.only(top:8.0),
+                          child: Column(
+                            children: [
+                              Icon(_presentCategories[index].icon),
+                              Text(_presentCategories[index].name)
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 7,
-                      child: Column(
-                        children: [
-                          for(int taskIndex = 0; taskIndex <
-                              _tasksMap[_presentCategories[index].name]
-                                  .length; taskIndex++)
-                            Text(_tasksMap[_presentCategories[index].name][taskIndex]
-                                .task)
-                        ],
-                      ),
-                    )
-                  ],
+                      Expanded(
+                        flex: 8,
+                        child: Column(
+                          children: [
+                            for(int taskIndex = 0; taskIndex <
+                                _tasksMap[_presentCategories[index].name]
+                                    .length; taskIndex++)
+                              // Text(_tasksMap[_presentCategories[index].name][taskIndex]
+                              //     .task)
+                              format(_tasksMap[_presentCategories[index].name][taskIndex])
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
             ]
             )),
