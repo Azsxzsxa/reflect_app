@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage>
     return Dismissible(
       key: Key(item.id.toString()),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(6, 0, 12, 0),
+        padding: EdgeInsets.fromLTRB(4, 4, 12, 4),
         // child: FlatButton(
         child:
         Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment:CrossAxisAlignment.start,children: <Widget>[
@@ -459,33 +459,40 @@ class _HomePageState extends State<HomePage>
             Flexible(child: ListView(children: [
               for(int index = 0; index < _tasksMap.length; index++)
                 Container(
-                  margin: const EdgeInsets.only(bottom:50.0),
+                  margin: const EdgeInsets.only(bottom:45.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 2,
                         child: Container(
-                          margin: const EdgeInsets.only(top:8.0),
+                          margin: const EdgeInsets.only(top:12.0),
                           child: Column(
                             children: [
-                              Icon(_presentCategories[index].icon),
-                              Text(_presentCategories[index].name)
+                              Icon(_presentCategories[index].icon,size:30, color: Color(0xFFF67B50),),
+                              Text(_presentCategories[index].name,style: TextStyles.mediumSmallBoldStyle,)
                             ],
                           ),
                         ),
                       ),
                       Expanded(
                         flex: 8,
-                        child: Column(
-                          children: [
-                            for(int taskIndex = 0; taskIndex <
-                                _tasksMap[_presentCategories[index].name]
-                                    .length; taskIndex++)
-                              // Text(_tasksMap[_presentCategories[index].name][taskIndex]
-                              //     .task)
-                              format(_tasksMap[_presentCategories[index].name][taskIndex])
-                          ],
+                        child: Card(
+                          color: Color(0xFFFDE4DC),
+                          elevation: 10.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(topLeft:Radius.circular(15.0),bottomLeft: Radius.circular(15.0)),
+                          ),
+                          child: Column(
+                            children: [
+                              for(int taskIndex = 0; taskIndex <
+                                  _tasksMap[_presentCategories[index].name]
+                                      .length; taskIndex++)
+                                // Text(_tasksMap[_presentCategories[index].name][taskIndex]
+                                //     .task)
+                                format(_tasksMap[_presentCategories[index].name][taskIndex])
+                            ],
+                          ),
                         ),
                       )
                     ],

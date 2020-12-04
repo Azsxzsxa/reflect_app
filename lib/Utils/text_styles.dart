@@ -8,4 +8,10 @@ class TextStyles{
       color: Colors.black54,
       fontFamily: "Quicksand",
       fontWeight: FontWeight.w600);
+
+  static TextStyle mediumSmallBoldStyle = TextStyle(
+      fontSize: 18,
+      color: Colors.black54,
+      fontFamily: "Quicksand",
+      fontWeight: FontWeight.w600);
 }
