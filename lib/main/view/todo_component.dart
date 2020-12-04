@@ -355,153 +355,96 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tasks',
-            style: new TextStyle(
-                color: Colors.black54,
-                fontSize: 25,
-                fontWeight: FontWeight.w700)),
-        backgroundColor: Colors.white70,
-        elevation: 0.0,
-        actions: [
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {},
-                child: Icon(
-                  Icons.card_giftcard_outlined,
-                  color: Colors.black54,
-                ),
-              )),
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  print('calendar top');
-                },
-                child: Icon(
-                  Icons.calendar_today_outlined,
-                  color: Colors.black54,
-                ),
-              )),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            // title: Text("Tasks"),
+            floating: false,
+            pinned: true,
+            snap: false,
+            title: Text("Tasks",style: TextStyles.mediumBoldStyle),
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
+              // centerTitle: false,
+
+              background: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
                   Container(
-                    width: double.infinity,
-                    height: 75,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          // spreadRadius: 10,
-                          blurRadius: 15,
-                          offset: Offset(8, 8), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 14.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("Today",
-                                  style: TextStyle(
-                                      fontSize: 22,
-                                      color: Color(0xFFF67B50),
-                                      // fontFamily: "Quicksand",
-                                      fontWeight: FontWeight.w600))),
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("17-11-2020",
-                                  style: new TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black38,
-                                      fontFamily: "Quicksand",
-                                      fontWeight: FontWeight.w600))),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 14.0),
-                    child: Row(
-                      children: [
-                        Spacer(flex: 9),
-                        Icon(Icons.arrow_back_ios_outlined,
-                            color: Colors.black38),
-                        Spacer(flex: 1),
-                        Icon(Icons.arrow_forward_ios_outlined,
-                            color: Colors.black38),
-                      ],
-                    ),
-                  ),
+                      margin: EdgeInsets.only(top: 16.0),
+                      padding: EdgeInsets.only(left: 32.0, right: 32.0),
+                      child: Text(
+                        'Some text',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'PlayfairDisplay',
+                            fontStyle: FontStyle.italic,
+                            fontSize: 16.0),
+                      )),
+                  Container(
+                      margin: EdgeInsets.only(top: 16.0),
+                      padding: EdgeInsets.only(left: 32.0, right: 32.0),
+                      child: Text(
+                        'some text',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'PlayfairDisplay',
+                            fontSize: 16.0),
+                      )),
                 ],
               ),
             ),
-            Flexible(child: ListView(children: [
-              for(int index = 0; index < _tasksMap.length; index++)
-                Container(
-                  margin: const EdgeInsets.only(bottom:45.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          margin: const EdgeInsets.only(top:12.0),
-                          child: Column(
-                            children: [
-                              Icon(_presentCategories[index].icon,size:30, color: Color(0xFFF67B50),),
-                              Text(_presentCategories[index].name,style: TextStyles.mediumSmallBoldStyle,)
-                            ],
+            expandedHeight: 200,
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                for(int index = 0; index < _tasksMap.length; index++)
+                  Container(
+                    margin: const EdgeInsets.only(bottom:50.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            margin: const EdgeInsets.only(top:12.0),
+                            child: Column(
+                              children: [
+                                Icon(_presentCategories[index].icon,size: 30),
+                                Text(_presentCategories[index].name,style: TextStyles.mediumSmallBoldStyle,)
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 8,
-                        child: Card(
-                          color: Color(0xFFFDE4DC),
-                          elevation: 10.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(topLeft:Radius.circular(15.0),bottomLeft: Radius.circular(15.0)),
+                        Expanded(
+                          flex: 8,
+                          child: Card(
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(topLeft:Radius.circular(15.0),bottomLeft:Radius.circular(15.0))
+                            ),
+                            child: Column(
+                              children: [
+                                for(int taskIndex = 0; taskIndex <
+                                    _tasksMap[_presentCategories[index].name]
+                                        .length; taskIndex++)
+                                  format(_tasksMap[_presentCategories[index].name][taskIndex])
+                              ],
+                            ),
                           ),
-                          child: Column(
-                            children: [
-                              for(int taskIndex = 0; taskIndex <
-                                  _tasksMap[_presentCategories[index].name]
-                                      .length; taskIndex++)
-                                // Text(_tasksMap[_presentCategories[index].name][taskIndex]
-                                //     .task)
-                                format(_tasksMap[_presentCategories[index].name][taskIndex])
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-            ]
-            )),
-          ],
-        ),
+              ]
+            ),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
