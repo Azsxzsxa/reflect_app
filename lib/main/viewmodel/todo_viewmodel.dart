@@ -29,7 +29,7 @@ class TodoViewModel extends TodoModel {
 
   static TodoViewModel fromMap(Map<String, dynamic> map) {
     return TodoViewModel(
-        id: map['id'], task: map['task'], details: map['details'], complete: map['complete'] == 1,date: map['date'],category: map['category']
+        id: map['id'], task: map['task'].toString(), details: map['details'].toString(), complete: map['complete'] == 1,date: map['date'],category: map['category'].toString()
     );
   }
 }

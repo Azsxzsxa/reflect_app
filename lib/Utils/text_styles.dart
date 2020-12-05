@@ -14,4 +14,10 @@ class TextStyles{
       color: Colors.black54,
       fontFamily: "Quicksand",
       fontWeight: FontWeight.w600);
+
+  static TextStyle largeBoldStyle = TextStyle(
+      fontSize: 28,
+      color: Colors.black54,
+      fontFamily: "Quicksand",
+      fontWeight: FontWeight.w700);
 }

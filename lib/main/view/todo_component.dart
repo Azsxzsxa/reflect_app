@@ -361,44 +361,47 @@ class _HomePageState extends State<HomePage>
           SliverAppBar(
             // title: Text("Tasks"),
             floating: false,
-            pinned: true,
+            pinned: false,
             snap: false,
-            title: Text("Tasks",style: TextStyles.mediumBoldStyle),
+            backgroundColor: Color(0xFFFFFFFF),
+            expandedHeight: 100,
+            leading:              IconButton(
+              icon: Icon(Icons.arrow_back),
+              tooltip: 'Open shopping cart',
+              onPressed: () {
+                // handle the press
+              },
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.calendar_today_outlined),
+                tooltip: 'Calendar',
+                onPressed: () {
+                  // handle the press
+                },
+              ),
+            ],
+            title: Text("Tasks",style: TextStyles.largeBoldStyle),
+            centerTitle: true,
             flexibleSpace: FlexibleSpaceBar(
+              // title:Text("Tasks",style: TextStyles.largeBoldStyle),
               collapseMode: CollapseMode.pin,
-              // centerTitle: false,
-
-              background: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.only(top: 16.0),
-                      padding: EdgeInsets.only(left: 32.0, right: 32.0),
-                      child: Text(
-                        'Some text',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'PlayfairDisplay',
-                            fontStyle: FontStyle.italic,
-                            fontSize: 16.0),
-                      )),
-                  Container(
-                      margin: EdgeInsets.only(top: 16.0),
-                      padding: EdgeInsets.only(left: 32.0, right: 32.0),
-                      child: Text(
-                        'some text',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'PlayfairDisplay',
-                            fontSize: 16.0),
-                      )),
-                ],
+              // centerTitle: true,
+              background: Container(
+                color: Color(0xFFFFFFFF),
+                padding: EdgeInsets.only(bottom: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // GestureDetector( onTap: () {}, child: Icon(Icons.arrow_back_ios) ) ,
+                    Text("17-10-2020",style: TextStyles.mediumBoldStyle,textAlign: TextAlign.center),
+                    // GestureDetector( onTap: () {}, child: Icon(Icons.calendar_today_outlined) )
+                  ],
+                ),
               ),
             ),
-            expandedHeight: 200,
+
           ),
           SliverList(
             delegate: SliverChildListDelegate(
