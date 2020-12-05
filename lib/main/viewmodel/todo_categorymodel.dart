@@ -13,6 +13,7 @@ class CategoryViewModel extends CategoryModel {
   int id;
   String name;
   IconData icon;
+  bool isDisplayed=false;
 
 
   CategoryViewModel({this.id, this.name, this.icon});
@@ -28,7 +29,7 @@ class CategoryViewModel extends CategoryModel {
   }
 
   static CategoryViewModel fromMap(Map<String, dynamic> map) {
-    var icon = IconData( map['codePoint'],fontFamily: map['fontFamily']);
+    var icon =new IconData( map['codePoint'],fontFamily: map['fontFamily']);
     return CategoryViewModel(
         id: map['id'], name: map['name'], icon: icon
     );

@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage>
 
   bool _isDetailedShown = false;
   bool _isCategoryShown = false;
+  bool _isTasksVisible = false;
 
   Map<String, bool> _categorySelectionMap = new Map();
   FocusNode detailsFocusNode;
@@ -407,41 +408,45 @@ class _HomePageState extends State<HomePage>
             delegate: SliverChildListDelegate(
               [
                 for(int index = 0; index < _tasksMap.length; index++)
-                  Container(
-                    margin: const EdgeInsets.only(bottom:50.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                            margin: const EdgeInsets.only(top:12.0),
-                            child: Column(
-                              children: [
-                                Icon(_presentCategories[index].icon,size: 30),
-                                Text(_presentCategories[index].name,style: TextStyles.mediumSmallBoldStyle,)
-                              ],
+                  AnimatedOpacity(
+                    opacity: _presentCategories[index].isDisplayed?1.0:0.0,
+                    duration: Duration(milliseconds: 1000),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom:50.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              margin: const EdgeInsets.only(top:12.0),
+                              child: Column(
+                                children: [
+                                  Icon(_presentCategories[index].icon,size: 30),
+                                  Text(_presentCategories[index].name,style: TextStyles.mediumSmallBoldStyle,)
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 8,
-                          child: Card(
-                            elevation: 10,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(topLeft:Radius.circular(15.0),bottomLeft:Radius.circular(15.0))
+                          Expanded(
+                            flex: 8,
+                            child: Card(
+                              elevation: 10,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(topLeft:Radius.circular(15.0),bottomLeft:Radius.circular(15.0))
+                              ),
+                              child: Column(
+                                children: [
+                                  for(int taskIndex = 0; taskIndex <
+                                      _tasksMap[_presentCategories[index].name]
+                                          .length; taskIndex++)
+                                    format(_tasksMap[_presentCategories[index].name][taskIndex])
+                                ],
+                              ),
                             ),
-                            child: Column(
-                              children: [
-                                for(int taskIndex = 0; taskIndex <
-                                    _tasksMap[_presentCategories[index].name]
-                                        .length; taskIndex++)
-                                  format(_tasksMap[_presentCategories[index].name][taskIndex])
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
               ]
@@ -478,13 +483,18 @@ class _HomePageState extends State<HomePage>
       // print(category);
       _presentCategories.add(category.first);
     });
-    print('map size');
-    print(_presentCategories.length);
-    // print(_tasksMap[_presentCategories[0].name].first.task);
-    // print(_tasksMap[_presentCategories[0].name][0]
-    //     .task);
 
     setState(() {});
+    tasksDelayedOpacity();
+  }
+
+  void tasksDelayedOpacity() async {
+    for(int index=0; index<_presentCategories.length;index++) {
+      await Future.delayed(Duration(milliseconds: 500));
+      setState(() {
+        _presentCategories[index].isDisplayed = true;
+      });
+    }
   }
 
   @override
